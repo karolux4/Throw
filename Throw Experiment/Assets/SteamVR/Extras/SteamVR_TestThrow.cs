@@ -28,7 +28,6 @@ namespace Valve.VR.Extras
 
         private void FixedUpdate()
         {
-            Debug.Log(trackedObj.origin.TransformVector(trackedObj.GetVelocity())+" "+ trackedObj.origin.TransformVector(trackedObj.GetVelocity()).magnitude);
             if (joint == null)
             {
                 GameObject go = GameObject.Instantiate(prefab);
@@ -37,7 +36,7 @@ namespace Valve.VR.Extras
                 joint = go.AddComponent<FixedJoint>();
                 joint.connectedBody = attachPoint;
             }
-            else if (joint != null && allowed_to_throw && time>0.3f)
+            else if (joint != null && allowed_to_throw && time>0.4f)
             {
                 GameObject go = joint.gameObject;
                 Rigidbody rigidbody = go.GetComponent<Rigidbody>();
@@ -52,11 +51,15 @@ namespace Valve.VR.Extras
                 Transform origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
                 if (origin != null)
                 {
+                    rigidbody.GetComponent<OnCollision>().Velocity = max_velocity;
+                    rigidbody.GetComponent<OnCollision>().Angular_Velocity = max_angular_velocity;
                     rigidbody.velocity = max_velocity;
                     rigidbody.angularVelocity = max_angular_velocity;
                 }
                 else
                 {
+                    rigidbody.GetComponent<OnCollision>().Velocity = max_velocity;
+                    rigidbody.GetComponent<OnCollision>().Angular_Velocity = max_angular_velocity;
                     rigidbody.velocity = max_velocity;
                     rigidbody.angularVelocity = max_angular_velocity;
                 }
@@ -72,7 +75,7 @@ namespace Valve.VR.Extras
             }
             else
             {
-                if (time > 0.75f)
+                if (time > 0.4f)
                 {
                     Check_Throw(ref velocity, ref delta,ref max_velocity, ref max_angular_velocity);
                 }
@@ -85,7 +88,7 @@ namespace Valve.VR.Extras
         private void Check_Throw(ref float prev_velocity, ref int delta, ref Vector3 max_velocity,ref Vector3 max_angular_velocity)
         {
             Transform origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
-            if (prev_velocity > 2f && prev_velocity > origin.TransformVector(trackedObj.GetVelocity()).magnitude)
+            if (prev_velocity > 0.75f && prev_velocity > origin.TransformVector(trackedObj.GetVelocity()).magnitude)
             {
                 if (delta > 0)
                 {
